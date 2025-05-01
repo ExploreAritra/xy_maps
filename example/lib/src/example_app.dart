@@ -1,0 +1,173 @@
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+import 'package:xy_maps/xy_maps.dart';
+
+class ExampleApp extends StatefulWidget {
+  const ExampleApp({Key? key}) : super(key: key);
+
+  @override
+  _ExampleAppState createState() => _ExampleAppState();
+}
+
+class _ExampleAppState extends State<ExampleApp> {
+  late MarkerController _controller;
+  final List<String> _importedIds = [];
+  Uint8List? _imageBytes;
+  double? _imageWidth;
+  double? _imageHeight;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = MarkerController();
+  }
+
+  int get _newCount => _controller.markers.where((m) => !_importedIds.contains(m.id)).length;
+
+  void _handleImport() async {
+    String json = await _pickGeoJson();
+    final imported = GeoJsonService.importGeoJson(json);
+    _controller.importMarkers(imported);
+    setState(() {
+      _importedIds.clear();
+      _importedIds.addAll(imported.map((m) => m.id));
+    });
+  }
+
+  Future<String> _pickGeoJson() async {
+    return Future.value(r'''{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[0.2979556857260093,0.30483959851115683]},"properties":{"id":"829c803a-adcb-4abb-9c5a-afaa8cfa6cf9","comment":[{"insert":"Dinner table \n"}]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[0.4361733462607401,0.8318865239851486]},"properties":{"id":"4d34a4e5-811f-475f-b62d-3461d6b43de9","comment":[{"insert":"Couch\n"}]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[0.8763572983276048,0.7309377465030732]},"properties":{"id":"7623f1b9-cfe2-419f-8cf7-79287786ce3d","comment":[{"insert":"Bed room\n"}]}}]}''');
+  }
+
+  void _exportAll() {
+    final json = GeoJsonService.exportGeoJson(_controller.markers);
+    _showJsonDialog(json);
+  }
+
+  void _syncNew() {
+    final newMarkers = _controller.markers.where((m) => !_importedIds.contains(m.id)).toList();
+    final json = GeoJsonService.exportGeoJson(newMarkers);
+    _showJsonDialog(json);
+    setState(() {
+      _importedIds.addAll(newMarkers.map((m) => m.id));
+    });
+  }
+
+  void _showJsonDialog(String json) {
+    print(json);
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('Exported GeoJSON'),
+        content: SingleChildScrollView(child: Text(json)),
+        actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text('Close'))],
+      ),
+    );
+  }
+
+  void _onMarkerAdded(GeoJsonMarker marker) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('Add Comment'),
+        content: SingleChildScrollView(
+          child: SizedBox(
+            width: 300,
+            height: 400,
+            child: QuillEditor(
+              controller: marker.commentController,
+              config: QuillEditorConfig(
+                checkBoxReadOnly: false,
+                scrollable: true,
+                autoFocus: true,
+                padding: EdgeInsets.zero,
+                expands: false,
+              ),
+              scrollController: ScrollController(),
+              focusNode: FocusNode(),
+            ),
+          ),
+        ),
+        actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text('Done'))],
+      ),
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
+      final decoded = await decodeImageFromList(bytes);
+      setState(() {
+        _imageBytes = bytes;
+        _imageWidth = decoded.width.toDouble();
+        _imageHeight = decoded.height.toDouble();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<MarkerController>.value(
+      value: _controller,
+      child: MaterialApp(
+        home: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            title: Text('XY Maps Example'),
+            actions: [
+              IconButton(icon: Icon(Icons.file_upload), onPressed: _handleImport),
+              IconButton(icon: Icon(Icons.file_download), onPressed: _exportAll),
+              PopupMenuButton<ImageSource>(
+                onSelected: _pickImage,
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: ImageSource.gallery,
+                    child: Text('Pick from Gallery'),
+                  ),
+                  PopupMenuItem(
+                    value: ImageSource.camera,
+                    child: Text('Capture with Camera'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          body: _imageBytes != null && _imageWidth != null && _imageHeight != null
+              ? XyMapView(
+            backgroundImage: MemoryImage(_imageBytes!),
+            imageWidth: _imageWidth!,
+            imageHeight: _imageHeight!,
+            onMarkerAdded: _onMarkerAdded,
+          )
+              : Center(child: Text('Select an image to begin.')),
+          floatingActionButton: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FloatingActionButton(
+                heroTag: 'mode',
+                child: Icon(_controller.mode == ViewMode.view ? Icons.edit : Icons.visibility),
+                onPressed: () {
+                  _controller.switchMode(
+                    _controller.mode == ViewMode.view ? ViewMode.edit : ViewMode.view,
+                  );
+                },
+              ),
+              if (_newCount > 0)
+                FloatingActionButton.extended(
+                  heroTag: 'sync',
+                  label: Text('Sync ($_newCount)'),
+                  icon: Icon(Icons.sync),
+                  onPressed: _syncNew,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
