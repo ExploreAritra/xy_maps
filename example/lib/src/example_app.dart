@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,6 +31,7 @@ class _ExampleAppState extends State<ExampleApp> {
   int get _newCount => _controller.markers.where((m) => !_importedIds.contains(m.id)).length;
 
   void _handleImport() async {
+    _controller.clearMarkers();
     String json = await _pickGeoJson();
     final imported = GeoJsonService.importGeoJson(json);
     _controller.importMarkers(imported);
@@ -103,11 +106,25 @@ class _ExampleAppState extends State<ExampleApp> {
       final bytes = await pickedFile.readAsBytes();
       final decoded = await decodeImageFromList(bytes);
       setState(() {
+        _controller.clearMarkers();
         _imageBytes = bytes;
         _imageWidth = decoded.width.toDouble();
         _imageHeight = decoded.height.toDouble();
       });
     }
+  }
+
+  Future<ui.Image> getImageDimensions(AssetImage assetImage) async {
+    final completer = Completer<ui.Image>();
+    final stream = assetImage.resolve(ImageConfiguration());
+    final listener = ImageStreamListener((ImageInfo info, bool _) {
+      completer.complete(info.image);
+    });
+
+    stream.addListener(listener);
+    final image = await completer.future;
+    stream.removeListener(listener);
+    return image; // You can access image.width and image.height
   }
 
   @override
@@ -143,8 +160,23 @@ class _ExampleAppState extends State<ExampleApp> {
             imageWidth: _imageWidth!,
             imageHeight: _imageHeight!,
             onMarkerAdded: _onMarkerAdded,
-          )
-              : Center(child: Text('Select an image to begin.')),
+          ) : FutureBuilder(
+            future: getImageDimensions(AssetImage("assets/floorplan.jpg")),
+            builder: (context, snapshot) {
+              if(snapshot.data == null) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              return XyMapView(
+                backgroundImage: AssetImage("assets/floorplan.jpg"),
+                imageWidth: snapshot.data!.width.toDouble(),
+                imageHeight: snapshot.data!.height.toDouble(),
+                onMarkerAdded: _onMarkerAdded,
+              );
+            }
+          ),
+              // : Center(child: Text('Select an image to begin.')),
           floatingActionButton: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
