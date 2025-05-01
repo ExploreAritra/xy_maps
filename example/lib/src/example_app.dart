@@ -9,10 +9,10 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:xy_maps/xy_maps.dart';
 
 class ExampleApp extends StatefulWidget {
-  const ExampleApp({Key? key}) : super(key: key);
+  const ExampleApp({super.key});
 
   @override
-  _ExampleAppState createState() => _ExampleAppState();
+  State<ExampleApp> createState() => _ExampleAppState();
 }
 
 class _ExampleAppState extends State<ExampleApp> {
@@ -177,26 +177,32 @@ class _ExampleAppState extends State<ExampleApp> {
             }
           ),
               // : Center(child: Text('Select an image to begin.')),
-          floatingActionButton: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              FloatingActionButton(
-                heroTag: 'mode',
-                child: Icon(_controller.mode == ViewMode.view ? Icons.edit : Icons.visibility),
-                onPressed: () {
-                  _controller.switchMode(
-                    _controller.mode == ViewMode.view ? ViewMode.edit : ViewMode.view,
-                  );
-                },
-              ),
-              if (_newCount > 0)
-                FloatingActionButton.extended(
-                  heroTag: 'sync',
-                  label: Text('Sync ($_newCount)'),
-                  icon: Icon(Icons.sync),
-                  onPressed: _syncNew,
-                ),
-            ],
+          floatingActionButton: Consumer<MarkerController>(
+            builder: (context, controller, _) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                    heroTag: 'mode',
+                    child: Icon(_controller.mode == ViewMode.view ? Icons.edit : Icons.visibility),
+                    onPressed: () {
+                      _controller.switchMode(
+                        _controller.mode == ViewMode.view ? ViewMode.edit : ViewMode.view,
+                      );
+                    },
+                  ),
+                  SizedBox(height: 20,),
+                  if (_newCount > 0)
+                    FloatingActionButton.extended(
+                      heroTag: 'sync',
+                      label: Text('Sync ($_newCount)'),
+                      icon: Icon(Icons.sync),
+                      onPressed: _syncNew,
+                    ),
+                ],
+              );
+            }
           ),
         ),
       ),

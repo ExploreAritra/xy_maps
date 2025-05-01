@@ -15,18 +15,19 @@ class XyMapView extends StatefulWidget {
   final ValueChanged<GeoJsonMarker>? onMarkerAdded;
 
   const XyMapView({
-    Key? key,
+    super.key,
     required this.backgroundImage,
     required this.imageWidth,
     required this.imageHeight,
     this.onMarkerAdded,
-  }) : super(key: key);
+  });
 
   @override
   State<XyMapView> createState() => _XyMapViewState();
 }
 
 class _XyMapViewState extends State<XyMapView> {
+
   final TransformationController _transformationCtrl = TransformationController();
 
   @override

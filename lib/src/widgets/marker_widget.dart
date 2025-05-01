@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:provider/provider.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3, Matrix4;
 import 'package:flutter/material.dart';
@@ -14,18 +13,16 @@ class MarkerWidget extends StatelessWidget {
   final TransformationController transformationController;  // Added
 
   const MarkerWidget({
-    Key? key,
+    super.key,
     required this.marker,
     required this.mapWidth,
     required this.mapHeight,
     required this.transformationController,  // Added
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     final controller = context.read<MarkerController>();
-    final left = marker.x * mapWidth;
-    final top = marker.y * mapHeight;
 
     return GestureDetector(
       onPanUpdate: controller.mode == ViewMode.edit
