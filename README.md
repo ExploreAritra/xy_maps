@@ -95,7 +95,7 @@ flutter run
 
 ## 🖼️ Screenshots
 
-Coming soon!
+![Drawing Usage](screenshots/usage.gif)
 
 ## 👨‍💻 Contributing
 
