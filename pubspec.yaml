@@ -1,5 +1,5 @@
 name: xy_maps
-description: "A new Flutter project."
+description: "xy_maps is a Flutter package that allows placing rich-commented markers on custom image backgrounds (e.g. floor plans). Users can zoom, pan, switch between edit/view mode, and export/import marker data using a GeoJSON-like format."
 version: 0.0.1
 homepage: https://github.com/ExploreAritra/xy_maps
 repository: https://github.com/ExploreAritra/xy_maps
