@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:vector_math/vector_math_64.dart';
 import '../controllers/marker_controller.dart';
 import '../models/geojson_marker.dart';
 import '../utils/mode_enum.dart';
@@ -27,7 +28,6 @@ class XyMapView extends StatefulWidget {
 }
 
 class _XyMapViewState extends State<XyMapView> {
-
   final TransformationController _transformationCtrl = TransformationController();
 
   @override
@@ -59,9 +59,12 @@ class _XyMapViewState extends State<XyMapView> {
                 return GestureDetector(
                   onTapUp: controller.mode == ViewMode.edit
                       ? (details) {
+                    final inverseMatrix = Matrix4.inverted(_transformationCtrl.value);
                     final local = details.localPosition;
-                    final x = (local.dx / renderedWidth).clamp(0.0, 1.0);
-                    final y = (local.dy / renderedHeight).clamp(0.0, 1.0);
+                    final Vector3 untransformed = inverseMatrix.transform3(Vector3(local.dx, local.dy, 0));
+
+                    final x = (untransformed.x / renderedWidth).clamp(0.0, 1.0);
+                    final y = (untransformed.y / renderedHeight).clamp(0.0, 1.0);
 
                     final id = const Uuid().v4();
                     final marker = GeoJsonMarker(
