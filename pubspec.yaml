@@ -1,6 +1,6 @@
 name: xy_maps
 description: "A Flutter package to place markers with rich text comments on floor plan images, with GeoJSON support."
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/ExploreAritra/xy_maps
 repository: https://github.com/ExploreAritra/xy_maps
 
