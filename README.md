@@ -19,7 +19,7 @@ Add the package in your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  xy_maps: ^1.0.0
+  xy_maps: ^0.0.1
 ```
 
 Then run:

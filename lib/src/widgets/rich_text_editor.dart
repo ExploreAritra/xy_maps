@@ -5,11 +5,7 @@ class RichTextEditor extends StatefulWidget {
   final List<dynamic>? initialValue;
   final void Function(List<dynamic>) onChanged;
 
-  const RichTextEditor({
-    super.key,
-    this.initialValue,
-    required this.onChanged,
-  });
+  const RichTextEditor({super.key, this.initialValue, required this.onChanged});
 
   @override
   State<RichTextEditor> createState() => _RichTextEditorState();
@@ -21,9 +17,10 @@ class _RichTextEditorState extends State<RichTextEditor> {
   @override
   void initState() {
     super.initState();
-    final doc = widget.initialValue != null
-        ? Document.fromJson(widget.initialValue!)
-        : Document();
+    final doc =
+        widget.initialValue != null
+            ? Document.fromJson(widget.initialValue!)
+            : Document();
     _controller = QuillController(
       document: doc,
       selection: const TextSelection.collapsed(offset: 0),

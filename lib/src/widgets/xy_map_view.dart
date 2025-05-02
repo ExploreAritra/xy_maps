@@ -58,30 +58,36 @@ class _XyMapViewState extends State<XyMapView> {
             child: Consumer<MarkerController>(
               builder: (context, controller, _) {
                 return GestureDetector(
-                  onTapUp: controller.mode == ViewMode.edit
-                      ? (details) {
-                          final inverseMatrix =
-                              Matrix4.inverted(_transformationCtrl.value);
-                          final local = details.localPosition;
-                          final Vector3 untransformed = inverseMatrix
-                              .transform3(Vector3(local.dx, local.dy, 0));
+                  onTapUp:
+                      controller.mode == ViewMode.edit
+                          ? (details) {
+                            final inverseMatrix = Matrix4.inverted(
+                              _transformationCtrl.value,
+                            );
+                            final local = details.localPosition;
+                            final Vector3 untransformed = inverseMatrix
+                                .transform3(Vector3(local.dx, local.dy, 0));
 
-                          final x =
-                              (untransformed.x / renderedWidth).clamp(0.0, 1.0);
-                          final y = (untransformed.y / renderedHeight)
-                              .clamp(0.0, 1.0);
+                            final x = (untransformed.x / renderedWidth).clamp(
+                              0.0,
+                              1.0,
+                            );
+                            final y = (untransformed.y / renderedHeight).clamp(
+                              0.0,
+                              1.0,
+                            );
 
-                          final id = const Uuid().v4();
-                          final marker = GeoJsonMarker(
-                            id: id,
-                            x: x,
-                            y: y,
-                            commentController: QuillController.basic(),
-                          );
-                          controller.addMarker(marker);
-                          widget.onMarkerAdded?.call(marker);
-                        }
-                      : null,
+                            final id = const Uuid().v4();
+                            final marker = GeoJsonMarker(
+                              id: id,
+                              x: x,
+                              y: y,
+                              commentController: QuillController.basic(),
+                            );
+                            controller.addMarker(marker);
+                            widget.onMarkerAdded?.call(marker);
+                          }
+                          : null,
                   child: InteractiveViewer(
                     transformationController: _transformationCtrl,
                     clipBehavior: Clip.none,

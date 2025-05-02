@@ -17,16 +17,16 @@ class GeoJsonMarker {
   });
 
   Map<String, dynamic> toGeoJsonFeature() => {
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [x, y],
-        },
-        "properties": {
-          "id": id,
-          "comment": commentController.document.toDelta().toJson(),
-        },
-      };
+    "type": "Feature",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [x, y],
+    },
+    "properties": {
+      "id": id,
+      "comment": commentController.document.toDelta().toJson(),
+    },
+  };
 
   static GeoJsonMarker fromGeoJsonFeature(Map<String, dynamic> feature) {
     final coords = feature['geometry']['coordinates'];
@@ -34,9 +34,10 @@ class GeoJsonMarker {
 
     final commentRaw = props['comment'];
 
-    final deltaJson = commentRaw is String
-        ? jsonDecode(commentRaw)
-        : commentRaw; // already a List
+    final deltaJson =
+        commentRaw is String
+            ? jsonDecode(commentRaw)
+            : commentRaw; // already a List
 
     return GeoJsonMarker(
       id: props['id'],

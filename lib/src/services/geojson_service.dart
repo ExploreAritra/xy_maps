@@ -5,10 +5,7 @@ import '../models/geojson_marker.dart';
 class GeoJsonService {
   static String exportGeoJson(List<GeoJsonMarker> markers) {
     final features = markers.map((m) => m.toGeoJsonFeature()).toList();
-    final geoJson = {
-      "type": "FeatureCollection",
-      "features": features,
-    };
+    final geoJson = {"type": "FeatureCollection", "features": features};
     return jsonEncode(geoJson);
   }
 
