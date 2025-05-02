@@ -37,6 +37,8 @@ dependencies:
   xy_maps:
     path: ../
   image_picker: ^1.1.2
+  flutter_quill: ^11.4.0
+  provider: ^6.1.5
 
 dev_dependencies:
   flutter_test:

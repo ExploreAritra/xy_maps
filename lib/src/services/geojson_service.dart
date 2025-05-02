@@ -15,8 +15,6 @@ class GeoJsonService {
   static List<GeoJsonMarker> importGeoJson(String jsonString) {
     final Map<String, dynamic> data = jsonDecode(jsonString);
     final features = data['features'] as List;
-    return features
-        .map((f) => GeoJsonMarker.fromGeoJsonFeature(f))
-        .toList();
+    return features.map((f) => GeoJsonMarker.fromGeoJsonFeature(f)).toList();
   }
 }

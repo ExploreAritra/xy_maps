@@ -1,5 +1,5 @@
 // lib/xy_maps.dart
-library xy_maps;
+library;
 
 export 'src/models/geojson_marker.dart';
 export 'src/controllers/marker_controller.dart';

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart' hide Text;
+import 'package:flutter_quill/flutter_quill.dart';
 
 class RichTextViewer extends StatelessWidget {
   final List<dynamic> content;
 
-  const RichTextViewer({Key? key, required this.content}) : super(key: key);
+  const RichTextViewer({super.key, required this.content});
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +27,8 @@ class _ExampleAppState extends State<ExampleApp> {
     _controller = MarkerController();
   }
 
-  int get _newCount => _controller.markers.where((m) => !_importedIds.contains(m.id)).length;
+  int get _newCount =>
+      _controller.markers.where((m) => !_importedIds.contains(m.id)).length;
 
   void _handleImport() async {
     _controller.clearMarkers();
@@ -42,7 +42,9 @@ class _ExampleAppState extends State<ExampleApp> {
   }
 
   Future<String> _pickGeoJson() async {
-    return Future.value(r'''{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[0.2979556857260093,0.30483959851115683]},"properties":{"id":"829c803a-adcb-4abb-9c5a-afaa8cfa6cf9","comment":[{"insert":"Dinner table \n"}]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[0.4361733462607401,0.8318865239851486]},"properties":{"id":"4d34a4e5-811f-475f-b62d-3461d6b43de9","comment":[{"insert":"Couch\n"}]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[0.8763572983276048,0.7309377465030732]},"properties":{"id":"7623f1b9-cfe2-419f-8cf7-79287786ce3d","comment":[{"insert":"Bed room\n"}]}}]}''');
+    return Future.value(
+      r'''{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[0.2979556857260093,0.30483959851115683]},"properties":{"id":"829c803a-adcb-4abb-9c5a-afaa8cfa6cf9","comment":[{"insert":"Dinner table \n"}]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[0.4361733462607401,0.8318865239851486]},"properties":{"id":"4d34a4e5-811f-475f-b62d-3461d6b43de9","comment":[{"insert":"Couch\n"}]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[0.8763572983276048,0.7309377465030732]},"properties":{"id":"7623f1b9-cfe2-419f-8cf7-79287786ce3d","comment":[{"insert":"Bed room\n"}]}}]}''',
+    );
   }
 
   void _exportAll() {
@@ -51,7 +53,8 @@ class _ExampleAppState extends State<ExampleApp> {
   }
 
   void _syncNew() {
-    final newMarkers = _controller.markers.where((m) => !_importedIds.contains(m.id)).toList();
+    final newMarkers =
+        _controller.markers.where((m) => !_importedIds.contains(m.id)).toList();
     final json = GeoJsonService.exportGeoJson(newMarkers);
     _showJsonDialog(json);
     setState(() {
@@ -60,42 +63,54 @@ class _ExampleAppState extends State<ExampleApp> {
   }
 
   void _showJsonDialog(String json) {
-    print(json);
+    debugPrint(json);
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text('Exported GeoJSON'),
-        content: SingleChildScrollView(child: Text(json)),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text('Close'))],
-      ),
+      builder:
+          (_) => AlertDialog(
+            title: Text('Exported GeoJSON'),
+            content: SingleChildScrollView(child: Text(json)),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Close'),
+              ),
+            ],
+          ),
     );
   }
 
   void _onMarkerAdded(GeoJsonMarker marker) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text('Add Comment'),
-        content: SingleChildScrollView(
-          child: SizedBox(
-            width: 300,
-            height: 400,
-            child: QuillEditor(
-              controller: marker.commentController,
-              config: QuillEditorConfig(
-                checkBoxReadOnly: false,
-                scrollable: true,
-                autoFocus: true,
-                padding: EdgeInsets.zero,
-                expands: false,
+      builder:
+          (_) => AlertDialog(
+            title: Text('Add Comment'),
+            content: SingleChildScrollView(
+              child: SizedBox(
+                width: 300,
+                height: 400,
+                child: QuillEditor(
+                  controller: marker.commentController,
+                  config: QuillEditorConfig(
+                    checkBoxReadOnly: false,
+                    scrollable: true,
+                    autoFocus: true,
+                    padding: EdgeInsets.zero,
+                    expands: false,
+                  ),
+                  scrollController: ScrollController(),
+                  focusNode: FocusNode(),
+                ),
               ),
-              scrollController: ScrollController(),
-              focusNode: FocusNode(),
             ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Done'),
+              ),
+            ],
           ),
-        ),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text('Done'))],
-      ),
     );
   }
 
@@ -137,46 +152,55 @@ class _ExampleAppState extends State<ExampleApp> {
           appBar: AppBar(
             title: Text('XY Maps Example'),
             actions: [
-              IconButton(icon: Icon(Icons.file_upload), onPressed: _handleImport),
-              IconButton(icon: Icon(Icons.file_download), onPressed: _exportAll),
+              IconButton(
+                icon: Icon(Icons.file_upload),
+                onPressed: _handleImport,
+              ),
+              IconButton(
+                icon: Icon(Icons.file_download),
+                onPressed: _exportAll,
+              ),
               PopupMenuButton<ImageSource>(
                 onSelected: _pickImage,
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: ImageSource.gallery,
-                    child: Text('Pick from Gallery'),
-                  ),
-                  PopupMenuItem(
-                    value: ImageSource.camera,
-                    child: Text('Capture with Camera'),
-                  ),
-                ],
+                itemBuilder:
+                    (context) => [
+                      PopupMenuItem(
+                        value: ImageSource.gallery,
+                        child: Text('Pick from Gallery'),
+                      ),
+                      PopupMenuItem(
+                        value: ImageSource.camera,
+                        child: Text('Capture with Camera'),
+                      ),
+                    ],
               ),
             ],
           ),
-          body: _imageBytes != null && _imageWidth != null && _imageHeight != null
-              ? XyMapView(
-            backgroundImage: MemoryImage(_imageBytes!),
-            imageWidth: _imageWidth!,
-            imageHeight: _imageHeight!,
-            onMarkerAdded: _onMarkerAdded,
-          ) : FutureBuilder(
-            future: getImageDimensions(AssetImage("assets/floorplan.jpg")),
-            builder: (context, snapshot) {
-              if(snapshot.data == null) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              return XyMapView(
-                backgroundImage: AssetImage("assets/floorplan.jpg"),
-                imageWidth: snapshot.data!.width.toDouble(),
-                imageHeight: snapshot.data!.height.toDouble(),
-                onMarkerAdded: _onMarkerAdded,
-              );
-            }
-          ),
-              // : Center(child: Text('Select an image to begin.')),
+          body:
+              _imageBytes != null && _imageWidth != null && _imageHeight != null
+                  ? XyMapView(
+                    backgroundImage: MemoryImage(_imageBytes!),
+                    imageWidth: _imageWidth!,
+                    imageHeight: _imageHeight!,
+                    onMarkerAdded: _onMarkerAdded,
+                  )
+                  : FutureBuilder(
+                    future: getImageDimensions(
+                      AssetImage("assets/floorplan.jpg"),
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.data == null) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      return XyMapView(
+                        backgroundImage: AssetImage("assets/floorplan.jpg"),
+                        imageWidth: snapshot.data!.width.toDouble(),
+                        imageHeight: snapshot.data!.height.toDouble(),
+                        onMarkerAdded: _onMarkerAdded,
+                      );
+                    },
+                  ),
+          // : Center(child: Text('Select an image to begin.')),
           floatingActionButton: Consumer<MarkerController>(
             builder: (context, controller, _) {
               return Column(
@@ -185,14 +209,20 @@ class _ExampleAppState extends State<ExampleApp> {
                 children: [
                   FloatingActionButton(
                     heroTag: 'mode',
-                    child: Icon(_controller.mode == ViewMode.view ? Icons.edit : Icons.visibility),
+                    child: Icon(
+                      _controller.mode == ViewMode.view
+                          ? Icons.edit
+                          : Icons.visibility,
+                    ),
                     onPressed: () {
                       _controller.switchMode(
-                        _controller.mode == ViewMode.view ? ViewMode.edit : ViewMode.view,
+                        _controller.mode == ViewMode.view
+                            ? ViewMode.edit
+                            : ViewMode.view,
                       );
                     },
                   ),
-                  SizedBox(height: 20,),
+                  SizedBox(height: 20),
                   if (_newCount > 0)
                     FloatingActionButton.extended(
                       heroTag: 'sync',
@@ -202,7 +232,7 @@ class _ExampleAppState extends State<ExampleApp> {
                     ),
                 ],
               );
-            }
+            },
           ),
         ),
       ),

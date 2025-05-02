@@ -236,7 +236,7 @@ packages:
     source: hosted
     version: "2.0.28"
   flutter_quill:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_quill
       sha256: de019f6160023d36ad3e89343da6d740ab66ae7839875c89871fbeabcb9e8f9b
@@ -454,7 +454,7 @@ packages:
     source: hosted
     version: "2.1.8"
   provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: provider
       sha256: "4abbd070a04e9ddc287673bf5a030c7ca8b685ff70218720abab8b092f53dd84"
@@ -715,4 +715,4 @@ packages:
     version: "0.0.1"
 sdks:
   dart: ">=3.7.2 <4.0.0"
-  flutter: ">=3.27.0"
+  flutter: ">=3.29.0"

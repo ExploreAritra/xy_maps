@@ -28,7 +28,8 @@ class XyMapView extends StatefulWidget {
 }
 
 class _XyMapViewState extends State<XyMapView> {
-  final TransformationController _transformationCtrl = TransformationController();
+  final TransformationController _transformationCtrl =
+      TransformationController();
 
   @override
   Widget build(BuildContext context) {
@@ -59,23 +60,27 @@ class _XyMapViewState extends State<XyMapView> {
                 return GestureDetector(
                   onTapUp: controller.mode == ViewMode.edit
                       ? (details) {
-                    final inverseMatrix = Matrix4.inverted(_transformationCtrl.value);
-                    final local = details.localPosition;
-                    final Vector3 untransformed = inverseMatrix.transform3(Vector3(local.dx, local.dy, 0));
+                          final inverseMatrix =
+                              Matrix4.inverted(_transformationCtrl.value);
+                          final local = details.localPosition;
+                          final Vector3 untransformed = inverseMatrix
+                              .transform3(Vector3(local.dx, local.dy, 0));
 
-                    final x = (untransformed.x / renderedWidth).clamp(0.0, 1.0);
-                    final y = (untransformed.y / renderedHeight).clamp(0.0, 1.0);
+                          final x =
+                              (untransformed.x / renderedWidth).clamp(0.0, 1.0);
+                          final y = (untransformed.y / renderedHeight)
+                              .clamp(0.0, 1.0);
 
-                    final id = const Uuid().v4();
-                    final marker = GeoJsonMarker(
-                      id: id,
-                      x: x,
-                      y: y,
-                      commentController: QuillController.basic(),
-                    );
-                    controller.addMarker(marker);
-                    widget.onMarkerAdded?.call(marker);
-                  }
+                          final id = const Uuid().v4();
+                          final marker = GeoJsonMarker(
+                            id: id,
+                            x: x,
+                            y: y,
+                            commentController: QuillController.basic(),
+                          );
+                          controller.addMarker(marker);
+                          widget.onMarkerAdded?.call(marker);
+                        }
                       : null,
                   child: InteractiveViewer(
                     transformationController: _transformationCtrl,

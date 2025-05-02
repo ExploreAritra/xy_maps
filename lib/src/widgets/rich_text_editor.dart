@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart' hide Text;
+import 'package:flutter_quill/flutter_quill.dart';
 
 class RichTextEditor extends StatefulWidget {
   final List<dynamic>? initialValue;
   final void Function(List<dynamic>) onChanged;
 
   const RichTextEditor({
-    Key? key,
+    super.key,
     this.initialValue,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<RichTextEditor> createState() => _RichTextEditorState();

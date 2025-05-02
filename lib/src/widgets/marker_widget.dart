@@ -33,16 +33,19 @@ class MarkerWidget extends StatelessWidget {
       child: GestureDetector(
         onPanUpdate: controller.mode == ViewMode.edit
             ? (details) {
-          final box = context.findAncestorRenderObjectOfType<RenderBox>()!;
-          final local = box.globalToLocal(details.globalPosition);
-          final inverseMatrix = Matrix4.inverted(transformationController.value);
-          final Vector3 untransformed = inverseMatrix.transform3(Vector3(local.dx, local.dy, 0));
+                final box =
+                    context.findAncestorRenderObjectOfType<RenderBox>()!;
+                final local = box.globalToLocal(details.globalPosition);
+                final inverseMatrix =
+                    Matrix4.inverted(transformationController.value);
+                final Vector3 untransformed =
+                    inverseMatrix.transform3(Vector3(local.dx, local.dy, 0));
 
-          final newX = (untransformed.x / mapWidth).clamp(0.0, 1.0);
-          final newY = (untransformed.y / mapHeight).clamp(0.0, 1.0);
+                final newX = (untransformed.x / mapWidth).clamp(0.0, 1.0);
+                final newY = (untransformed.y / mapHeight).clamp(0.0, 1.0);
 
-          controller.updateMarkerPosition(marker.id, newX, newY);
-        }
+                controller.updateMarkerPosition(marker.id, newX, newY);
+              }
             : null,
         onTap: () => _showCommentDialog(context),
         child: Icon(
@@ -67,7 +70,8 @@ class MarkerWidget extends StatelessWidget {
             scrollController: ScrollController(),
             focusNode: FocusNode(),
             config: QuillEditorConfig(
-              checkBoxReadOnly: context.read<MarkerController>().mode == ViewMode.view,
+              checkBoxReadOnly:
+                  context.read<MarkerController>().mode == ViewMode.view,
               scrollable: true,
               autoFocus: false,
               padding: EdgeInsets.zero,

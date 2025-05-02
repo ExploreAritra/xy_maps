@@ -1,39 +1,110 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# xy_maps
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+**xy_maps** is a Flutter package that allows placing rich-commented markers on custom image backgrounds (e.g. floor plans). Users can zoom, pan, switch between edit/view mode, and export/import marker data using a GeoJSON-like format.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+## ✨ Features
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+- 🗺️ Custom image as a map (e.g., floor plan, site layout)
+- 🔍 Pinch to zoom and pan support via `InteractiveViewer`
+- 🖱️ Tap to place markers in edit mode
+- 📝 Add rich text comments (bold, italics, bullets, links) with `flutter_quill`
+- 🧭 Edit/view mode toggle
+- 🔄 Move existing markers
+- 🗃️ GeoJSON-compatible import/export format
+- ⚙️ State management with `provider`
 
-## Features
+## 📦 Installation
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+Add the package in your `pubspec.yaml`:
 
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
+```yaml
+dependencies:
+  xy_maps: ^1.0.0
 ```
 
-## Additional information
+Then run:
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+```bash
+flutter pub get
+```
+
+## 🚀 Getting Started
+
+### 1. Wrap your widget tree in `ChangeNotifierProvider`
+
+```dart
+ChangeNotifierProvider(
+  create: (_) => MarkerController(),
+  child: MyApp(),
+);
+```
+
+### 2. Add `XyMapView` to your widget tree
+
+```dart
+XyMapView(
+  backgroundImage: AssetImage('assets/floorplan.png'),
+  imageWidth: 1920,
+  imageHeight: 1080,
+  onMarkerAdded: (marker) {
+    print('New marker: (${marker.x}, ${marker.y})');
+  },
+);
+```
+
+### 3. Switch between view and edit modes
+
+```dart
+final controller = context.read<MarkerController>();
+controller.setMode(ViewMode.edit); // or ViewMode.view
+```
+
+## 📍 Marker Format
+
+Marker data is represented in a GeoJSON-like format:
+
+```json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [0.5, 0.3]
+      },
+      "properties": {
+        "comment": { "ops": [{ "insert": "Hello marker!\n" }] }
+      }
+    }
+  ]
+}
+```
+
+Use `GeoJsonMarker.toJson()` and `GeoJsonMarker.fromJson()` for conversion.
+
+## 🧪 Example
+
+To try it out quickly:
+
+```bash
+git clone https://github.com/ExploreAritra/xy_maps.git
+cd xy_maps/example
+flutter run
+```
+
+## 🖼️ Screenshots
+
+Coming soon!
+
+## 👨‍💻 Contributing
+
+Pull requests are welcome! Please open issues for feature requests or bugs.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+Developed by [@ExploreAritra](https://github.com/ExploreAritra)

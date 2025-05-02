@@ -26,7 +26,8 @@ class MarkerController extends ChangeNotifier {
   }
 
   void updateMarkerPosition(String id, double newX, double newY) {
-    final marker = _markers.firstWhere((m) => m.id == id, orElse: () => throw Exception("Marker not found"));
+    final marker = _markers.firstWhere((m) => m.id == id,
+        orElse: () => throw Exception("Marker not found"));
     marker.x = newX;
     marker.y = newY;
     notifyListeners();
